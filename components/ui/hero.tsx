@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { MoveRight } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 function Hero() {
@@ -63,8 +64,10 @@ function Hero() {
             </p>
           </div>
           <div className="flex flex-row gap-3">
-            <Button size="lg" className="gap-4">
-              Start creating <MoveRight className="w-4 h-4" />
+            <Button size="lg" className="gap-4" asChild>
+              <Link href="/auth">
+                Start creating <MoveRight className="w-4 h-4" />
+              </Link>
             </Button>
           </div>
         </div>

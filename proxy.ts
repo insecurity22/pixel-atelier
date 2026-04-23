@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -25,8 +25,24 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // 세션 토큰을 리프레시하여 만료되지 않도록 유지
-  await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { pathname } = request.nextUrl;
+
+  // Redirect unauthenticated users away from protected routes
+  if (!user && pathname.startsWith("/workspace")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth";
+    url.searchParams.set("next", pathname);
+    return NextResponse.redirect(url);
+  }
+
+  // Redirect authenticated users away from the auth page
+  if (user && pathname === "/auth") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/workspace";
+    return NextResponse.redirect(url);
+  }
 
   return supabaseResponse;
 }

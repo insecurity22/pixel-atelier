@@ -45,7 +45,7 @@ export function CreditModal({ open, onClose }: CreditModalProps) {
       const { url } = await createCheckoutSession(key);
       window.location.href = url;
     } catch (e) {
-      setError(e instanceof Error ? e.message : "결제 페이지를 불러오지 못했어요. 다시 시도해주세요.");
+      setError("결제 페이지를 불러오지 못했어요. 다시 시도해주세요.");
       setLoadingPlan(null);
     }
   }

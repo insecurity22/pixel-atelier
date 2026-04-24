@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { createClient } from "@/lib/supabase/client";
 import { deductCredits, getUnlockedHairStyles, unlockHairStyle } from "@/app/actions/credits";
 import { CreditModal } from "./credit-modal";
+import { PREMIUM_HAIR_COSTS, PREMIUM_OUTFIT_COST } from "@/lib/constants";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -56,8 +57,6 @@ const OUTFITS: Outfit[] = [
   { id: "none", label: "없음", badge: '' },
 ];
 
-const PREMIUM_OUTFIT_COST = 100;
-const PREMIUM_HAIR_COST = 100;
 
 const PETS: Pet[] = [
   { id: "none", label: "없음" },
@@ -187,7 +186,7 @@ export function CharacterCustomizer({ credits, onCreditsChange }: CharacterCusto
     // PRO 헤어 미리보기 중이면 크레딧 차감 후 확정
     let effectiveHairStyle = hairStyle;
     if (pendingHairStyle) {
-      if (credits < PREMIUM_HAIR_COST) {
+      if (credits < (PREMIUM_HAIR_COSTS[pendingHairStyle.id] ?? 0)) {
         setCreditModalOpen(true);
         return;
       }
@@ -431,7 +430,7 @@ export function CharacterCustomizer({ credits, onCreditsChange }: CharacterCusto
                     PRO
                   </span>
                   <p className="text-xs text-amber-800 dark:text-amber-300 truncate">
-                    <span className="font-semibold">{pendingHairStyle.label}</span> 미리보기 중 · 저장 시 100 크레딧 차감
+                    <span className="font-semibold">{pendingHairStyle.label}</span> 미리보기 중 · 저장 시 {PREMIUM_HAIR_COSTS[pendingHairStyle.id]} 크레딧 차감
                   </p>
                 </>
               ) : (

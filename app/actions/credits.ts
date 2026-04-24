@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { PREMIUM_HAIR_COSTS } from "@/lib/constants";
 
 export async function getUnlockedHairStyles(): Promise<string[]> {
   const supabase = await createClient();
@@ -38,10 +39,13 @@ export async function unlockHairStyle(styleId: string): Promise<{ credits: numbe
     return { credits: userData?.credits ?? 0, unlockedStyles };
   }
 
-  const currentCredits = userData?.credits ?? 0;
-  if (currentCredits < 2000) throw new Error("크레딧이 부족합니다");
+  const cost = PREMIUM_HAIR_COSTS[styleId];
+  if (cost === undefined) throw new Error("알 수 없는 헤어 스타일입니다");
 
-  const newCredits = currentCredits - 2000;
+  const currentCredits = userData?.credits ?? 0;
+  if (currentCredits < cost) throw new Error("크레딧이 부족합니다");
+
+  const newCredits = currentCredits - cost;
   const newUnlocked = [...unlockedStyles, styleId];
 
   const { error } = await admin

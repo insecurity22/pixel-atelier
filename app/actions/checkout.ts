@@ -33,7 +33,7 @@ export async function createCheckoutSession(plan: PlanKey): Promise<{ url: strin
     products: [PRODUCT_IDS[plan]],
     externalCustomerId: user.id,
     customerEmail: user.email,
-    successUrl: `${origin}/workspace`,
+    successUrl: `${origin}/workspace?payment_success=1`,
   });
 
   return { url: checkout.url };
